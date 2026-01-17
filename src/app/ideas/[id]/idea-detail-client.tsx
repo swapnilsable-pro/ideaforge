@@ -213,7 +213,7 @@ export function IdeaDetailClient({ ideaId }: IdeaDetailClientProps) {
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/ideas/${id}`, {
+      const response = await fetch(`/api/ideas/${ideaId}`, {
         method: 'DELETE',
       });
 
