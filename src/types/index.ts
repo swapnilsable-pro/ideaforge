@@ -123,6 +123,8 @@ export interface SavedIdea {
   updated_at: string;
 }
 
+// MVP3: User Profile & Ikigai Types
+export * from './user-profile';
 
 // LLM Types
 export type LLMProvider = 'gemini' | 'openai' | 'claude' | 'grok';

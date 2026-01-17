@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import { generateIdea } from '@/lib/llm';
 import { getProblemById, getRandomProblem } from '@/lib/problems';
+import { createClient } from '@/lib/supabase/server';
+import { calculateIdeaFit } from '@/lib/ikigai/fit-scorer';
 import type { 
   GenerateIdeaRequest, 
   GeneratedIdea, 
   BusinessModel, 
   Technology,
-  LLMProvider 
+  LLMProvider,
+  UserProfile 
 } from '@/types';
 
 const BUSINESS_MODELS: BusinessModel[] = [
@@ -28,6 +31,21 @@ export async function POST(request: Request) {
     const body: GenerateIdeaRequest & { llmProvider?: LLMProvider } = await request.json();
     const { domain, problemId, businessModel, technology, llmProvider } = body;
 
+    // Fetch user profile for context-aware generation
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    let userProfile: UserProfile | null = null;
+    if (user) {
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+      
+      userProfile = profile;
+    }
+
     // Get the problem - either specific or random
     const problem = problemId 
       ? getProblemById(problemId) 
@@ -44,8 +62,8 @@ export async function POST(request: Request) {
     const selectedModel = businessModel || getRandomElement(BUSINESS_MODELS);
     const selectedTech = technology || getRandomElement(TECHNOLOGIES);
 
-    // Build the prompt for idea generation
-    const prompt = buildIdeaPrompt(problem, selectedModel, selectedTech);
+    // Build the prompt for idea generation (context-aware if profile exists)
+    const prompt = buildIdeaPrompt(problem, selectedModel, selectedTech, userProfile);
 
     // Generate the idea using the LLM (defaults to Groq)
     const response = await generateIdea(prompt, llmProvider, {
@@ -56,7 +74,17 @@ export async function POST(request: Request) {
     // Parse the LLM response
     const idea = parseIdeaResponse(response.content, problem, selectedModel, selectedTech);
 
-    return NextResponse.json({ success: true, idea });
+    // Calculate fit score if user has profile
+    let fitAnalysis = null;
+    if (userProfile && userProfile.onboarding_completed) {
+      fitAnalysis = calculateIdeaFit(idea, userProfile);
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      idea,
+      fitAnalysis 
+    });
   } catch (error) {
     console.error('Generation error:', error);
     return NextResponse.json(
@@ -69,7 +97,8 @@ export async function POST(request: Request) {
 function buildIdeaPrompt(
   problem: ReturnType<typeof getProblemById>,
   businessModel: BusinessModel,
-  technology: Technology
+  technology: Technology,
+  userProfile?: UserProfile | null
 ): string {
   const modelLabels: Record<BusinessModel, string> = {
     b2b_saas: 'B2B SaaS',
@@ -93,6 +122,60 @@ function buildIdeaPrompt(
     robotics: 'Robotics',
   };
 
+  // Build context-aware prompt if user profile exists
+  if (userProfile && userProfile.onboarding_completed) {
+    const profileContext = `
+FOUNDER PROFILE (Effectuation: "Bird-in-Hand" Principle):
+- Skills: ${userProfile.skills.join(', ') || 'Not specified'}
+- Experience: ${userProfile.experience.join(' | ') || 'Not specified'}
+- Domain Expertise: ${userProfile.expertise.join(', ') || 'Not specified'}
+- Network: ${JSON.stringify(userProfile.network)}
+- Resources: Budget = ${userProfile.resources.budget}, Time = ${userProfile.resources.time}
+- Passions (Ikigai): ${userProfile.passions.join(', ') || 'Not specified'}
+- Market Needs (their POV): ${userProfile.market_needs.join(', ') || 'Not specified'}
+
+CONSTRAINT: Generate an idea that MAXIMIZES leverage of the founder's existing assets.
+- MUST align with at least 2 of their skills
+- SHOULD tap into their network or domain expertise
+- MUST be feasible given their resources (${userProfile.resources.budget}, ${userProfile.resources.time})
+- SHOULD align with their passions for sustained motivation
+
+Format the job_story as a PERSONALIZED narrative:
+"WHEN I [founder's specific context], I WANT TO [leverage their skills/network], SO THAT [solve the problem]"
+`;
+
+    return `You are a startup advisor using Effectuation principles. Generate a personalized business idea.
+
+${profileContext}
+
+PROBLEM: ${problem!.title}
+DETAILS: ${problem!.description}
+BUSINESS MODEL: ${modelLabels[businessModel]}
+TECHNOLOGY: ${techLabels[technology]}
+
+Respond with ONLY valid JSON (no markdown, no explanation):
+
+{
+  "title": "Catchy startup name, 2-4 words",
+  "tagline": "One-line value proposition under 15 words",
+  "solution_description": "2-3 paragraphs explaining how THIS FOUNDER specifically can build this using their skills and network.",
+  "target_audience": "Specific customer segment (consider founder's network)",
+  "revenue_model": "How the business makes money (align with their monetization prefs)",
+  "job_story": {
+    "situation": "When I [founder's context from experience]",
+    "motivation": "I want to leverage my [specific skills/network]",
+    "outcome": "So I can [solve problem for target audience]"
+  },
+  "key_features": ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5"],
+  "validation_data": {
+    "risk_warnings": ["Risk 1 considering founder profile", "Risk 2"],
+    "opportunities": ["Opportunity leveraging founder's advantages", "Opportunity 2"]
+  },
+  "viability_score": 75
+}`;
+  }
+
+  // Generic prompt (no profile)
   return `You are an expert startup advisor. Generate a business idea as a JSON object.
 
 PROBLEM: ${problem!.title}
