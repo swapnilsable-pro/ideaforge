@@ -8,8 +8,8 @@ export interface UserNetwork {
 }
 
 export interface UserResources {
-  budget?: 'bootstrap' | 'seed_funded' | 'well_funded';
-  time?: 'nights_weekends' | 'part_time' | 'full_time';
+  budget: 'bootstrap' | 'seed_funded' | 'well_funded';
+  time: 'nights_weekends' | 'part_time' | 'full_time';
   unique_access?: string[];
 }
 

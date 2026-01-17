@@ -209,7 +209,6 @@ function assessResourceFeasibility(
     iot: 7,
     mobile_app: 4,
     web_platform: 3,
-    api_service: 3,
   };
 
   const complexity = idea.technology ? techComplexity[idea.technology] || 5 : 5;

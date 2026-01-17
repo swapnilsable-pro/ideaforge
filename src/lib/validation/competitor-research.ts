@@ -1,4 +1,4 @@
-import Groq from 'groq-sdk';
+import Groq from 'groq-sdk/index.mjs';
 import { SavedIdea } from '@/types';
 
 export interface Competitor {

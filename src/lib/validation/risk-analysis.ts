@@ -55,7 +55,8 @@ export function analyzeRisks(idea: SavedIdea): RiskAnalysis {
   const risks: Risk[] = [];
   
   // 1. Skill Gap Analysis
-  const techComplexity = TECH_COMPLEXITY[idea.technology || 'web_platform'];
+  const tech = (idea.technology as Technology) || 'web_platform';
+  const techComplexity = TECH_COMPLEXITY[tech];
   if (techComplexity >= 7) {
     risks.push({
       title: 'High Technical Complexity',
@@ -91,7 +92,8 @@ export function analyzeRisks(idea: SavedIdea): RiskAnalysis {
     });
   }
 
-  const modelDifficulty = MODEL_DIFFICULTY[idea.business_model || 'b2b_saas'];
+  const model = (idea.business_model as BusinessModel) || 'b2b_saas';
+  const modelDifficulty = MODEL_DIFFICULTY[model];
   if (modelDifficulty >= 7) {
     risks.push({
       title: 'Complex Business Model',

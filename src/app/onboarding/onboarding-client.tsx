@@ -11,8 +11,8 @@ const TECH_OPTIONS: Technology[] = [
 ];
 
 const DOMAIN_OPTIONS: Domain[] = [
-  'fintech', 'health', 'edtech', 'climate', 'social_impact', 
-  'enterprise', 'consumer', 'developer_tools'
+  'climate', 'health', 'ai_safety', 'social_impact',
+  'fintech', 'edtech', 'cybersecurity', 'food_agriculture'
 ];
 
 const BUSINESS_MODEL_OPTIONS: BusinessModel[] = [
@@ -37,10 +37,14 @@ export default function OnboardingClient() {
     domain_experts: [] as string[],
     enterprise_contacts: false,
   });
-  const [resources, setResources] = useState({
-    budget: 'bootstrap' as const,
-    time: 'nights_weekends' as const,
-    unique_access: [] as string[],
+  const [resources, setResources] = useState<{
+    budget: 'bootstrap' | 'seed_funded' | 'well_funded';
+    time: 'nights_weekends' | 'part_time' | 'full_time';
+    unique_access: string[];
+  }>({
+    budget: 'bootstrap',
+    time: 'nights_weekends',
+    unique_access: [],
   });
   const [passions, setPassions] = useState<string[]>(['']);
   const [strengths, setStrengths] = useState<string[]>(['']);

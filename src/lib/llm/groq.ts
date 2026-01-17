@@ -1,4 +1,4 @@
-import Groq from 'groq-sdk';
+import Groq from 'groq-sdk/index.mjs';
 import type { LLMResponse } from '@/types';
 
 const groq = new Groq({
