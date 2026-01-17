@@ -85,8 +85,31 @@ function generateKeyword(idea: SavedIdea): string {
   return titleWords || idea.domain || 'startup';
 }
 
+// Simple hash function to create seed from keyword
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+}
+
+// Seeded random number generator
+function seededRandom(seed: number): () => number {
+  let state = seed;
+  return function() {
+    state = (state * 9301 + 49297) % 233280;
+    return state / 233280;
+  };
+}
+
 function generateFallbackTrend(keyword: string): TrendAnalysis {
-  // Generate synthetic 12-month data with some randomness
+  // Generate deterministic synthetic 12-month data based on keyword
+  const seed = hashString(keyword);
+  const random = seededRandom(seed);
+  
   const timelineData: TrendDataPoint[] = [];
   const now = new Date();
 
@@ -94,9 +117,9 @@ function generateFallbackTrend(keyword: string): TrendAnalysis {
     const date = new Date(now);
     date.setMonth(date.getMonth() - i);
     
-    // Generate a value with slight upward trend + noise
+    // Generate a deterministic value with slight upward trend + seeded noise
     const baseValue = 40 + (11 - i) * 2; // Slight upward trend
-    const noise = Math.random() * 20 - 10; // +/- 10 random
+    const noise = (random() * 20) - 10; // +/- 10 deterministic noise
     const value = Math.max(0, Math.min(100, Math.round(baseValue + noise)));
 
     timelineData.push({
