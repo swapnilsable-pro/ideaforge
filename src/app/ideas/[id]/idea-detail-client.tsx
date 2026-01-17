@@ -219,7 +219,7 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
             />
           </div>
 
-          {/* Validation Dashboard - Right Column */}
+          {/* Signal Score - Right Column */}
           <div className={styles.dashboardColumn}>
             <div className={styles.dashboardCard}>
               <h3 className={styles.dashboardTitle}>Founder Signal Score</h3>
@@ -229,15 +229,18 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
                 onValidate={handleValidate}
               />
             </div>
-            
-            <div className={styles.dashboardCard}>
-              <h3 className={styles.dashboardTitle}>Competitive Landscape</h3>
-              <CompetitorList 
-                analysis={competitorAnalysis}
-                isLoading={isResearching}
-                onResearch={handleResearchCompetitors}
-              />
-            </div>
+          </div>
+        </div>
+
+        {/* Competitor Section - Full Width */}
+        <div className={styles.fullWidthSection}>
+          <div className={styles.dashboardCard}>
+            <h3 className={styles.dashboardTitle}>Competitive Landscape</h3>
+            <CompetitorList 
+              analysis={competitorAnalysis}
+              isLoading={isResearching}
+              onResearch={handleResearchCompetitors}
+            />
           </div>
         </div>
       </main>
