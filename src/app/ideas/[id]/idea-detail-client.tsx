@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation';
 import { SavedIdea, JobStory, GeneratedIdea, ValidationData } from '@/types';
 import { SignalScore } from '@/lib/validation/signal-score';
 import { CompetitorAnalysis } from '@/lib/validation/competitor-research';
+import { TrendAnalysis } from '@/lib/validation/trend-research';
 import { IdeaCard } from '@/components/idea-card';
 import { SignalScoreGauge } from '@/components/signal-score-gauge';
 import { CompetitorList } from '@/components/competitor-list';
+import { TrendChart } from '@/components/trend-chart';
 import styles from './page.module.css';
 
 interface IdeaDetailClientProps {
@@ -26,6 +28,9 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
   
   const [competitorAnalysis, setCompetitorAnalysis] = useState<CompetitorAnalysis | null>(null);
   const [isResearching, setIsResearching] = useState(false);
+  
+  const [trendAnalysis, setTrendAnalysis] = useState<TrendAnalysis | null>(null);
+  const [isFetchingTrends, setIsFetchingTrends] = useState(false);
 
   useEffect(() => {
     fetchIdea();
@@ -58,6 +63,14 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
         } else {
           // Auto-trigger competitor research
           handleResearchCompetitors();
+        }
+        
+        // Load trend data if available
+        if (data.idea.validation_report?.trends) {
+          setTrendAnalysis(data.idea.validation_report.trends);
+        } else {
+          // Auto-trigger trend research
+          handleFetchTrends();
         }
       } else {
         setError(data.error || 'Failed to fetch idea');
@@ -109,6 +122,27 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
       console.error('Competitor research error:', err);
     } finally {
       setIsResearching(false);
+    }
+  };
+
+  const handleFetchTrends = async () => {
+    setIsFetchingTrends(true);
+    try {
+      const response = await fetch(`/api/ideas/${id}/trends`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setTrendAnalysis(data.analysis);
+      } else {
+        console.error('Trend fetch failed:', data.error);
+      }
+    } catch (err) {
+      console.error('Trend fetch error:', err);
+    } finally {
+      setIsFetchingTrends(false);
     }
   };
 
@@ -227,6 +261,15 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
                 score={signalScore}
                 isLoading={isValidating}
                 onValidate={handleValidate}
+              />
+            </div>
+            
+            <div className={styles.dashboardCard}>
+              <h3 className={styles.dashboardTitle}>Trend Trajectory</h3>
+              <TrendChart 
+                analysis={trendAnalysis}
+                isLoading={isFetchingTrends}
+                onFetch={handleFetchTrends}
               />
             </div>
           </div>
