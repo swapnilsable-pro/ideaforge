@@ -7,7 +7,7 @@ import { DomainSelector } from '@/components/domain-selector';
 import { ChallengeList } from '@/components/challenge-card';
 import { IdeaCard } from '@/components/idea-card';
 import { LoadingSpinner } from '@/components/loading-spinner';
-import { LogoutButton } from '@/components/auth/auth-buttons';
+import { UserDropdown } from '@/components/auth/user-dropdown';
 import type { Domain, UnsolvedProblem, GeneratorState } from '@/types';
 import styles from './page.module.css';
 
@@ -210,29 +210,24 @@ export function GeneratorClient() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button onClick={handleStartOver} className={styles.logo}>
-          <span className={styles.logoIcon}>⚡</span>
-          <span className={styles.logoText}>IdeaForge</span>
-        </button>
-        
-        <div className={styles.userSection}>
-          {user.user_metadata?.avatar_url && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img 
-              src={user.user_metadata.avatar_url} 
-              alt="Profile" 
-              className={styles.avatar}
-            />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button onClick={handleStartOver} className={styles.logo}>
+            <span className={styles.logoIcon}>⚡</span>
+            <span className={styles.logoText}>IdeaForge</span>
+          </button>
+          
+          {state.step !== 'domain' && (
+            <button 
+              onClick={handleBack} 
+              className={styles.headerBackButton}
+              title="Go Back"
+            >
+              ←
+            </button>
           )}
-          <span className={styles.userName}>
-            {user.user_metadata?.name || user.email}
-          </span>
-          <LogoutButton />
         </div>
-      </header>
 
-      <main className={styles.main}>
-        {/* Progress Indicator */}
+        {/* Progress Indicator - Moved to Header */}
         <div className={styles.progress}>
           <div className={`${styles.step} ${state.step === 'domain' ? styles.active : ''} ${['challenge', 'generating', 'result'].includes(state.step) ? styles.completed : ''}`}>
             <span className={styles.stepNumber}>1</span>
@@ -249,6 +244,11 @@ export function GeneratorClient() {
             <span className={styles.stepLabel}>Idea</span>
           </div>
         </div>
+        
+        <UserDropdown user={user} />
+      </header>
+
+      <main className={styles.main}>
 
         {/* Error Message */}
         {state.error && (
@@ -257,72 +257,65 @@ export function GeneratorClient() {
           </div>
         )}
 
-        {/* Step Content */}
-        <div className={styles.content}>
-          {state.step === 'domain' && (
-            <DomainSelector
-              selectedDomain={state.selectedDomain}
-              onSelect={handleDomainSelect}
-            />
-          )}
+        {state.step === 'domain' && (
+          <DomainSelector
+            selectedDomain={state.selectedDomain}
+            onSelect={handleDomainSelect}
+          />
+        )}
 
-          {state.step === 'challenge' && (
-            <div className={styles.challengeStep}>
-              <div className={styles.challengeHeader}>
-                <button onClick={handleBack} className={styles.backButton}>
-                  ← Back
-                </button>
-                <h2 className={styles.challengeTitle}>
-                  Select a <span className="gradient-text">Grand Challenge</span>
-                </h2>
-                <p className={styles.challengeSubtitle}>
-                  Choose a specific problem to solve, or let us pick randomly
-                </p>
-              </div>
-
-              <div className={styles.challengeActions}>
-                <button 
-                  className="glass-button button-primary"
-                  onClick={handleRandomGenerate}
-                >
-                  🎲 Random Challenge → Generate
-                </button>
-                {state.selectedProblem && (
-                  <button 
-                    className="glass-button button-neon"
-                    onClick={handleGenerate}
-                  >
-                    <span>🚀 Generate from Selected</span>
-                  </button>
-                )}
-              </div>
-
-              <ChallengeList
-                problems={problems}
-                selectedId={state.selectedProblem?.id}
-                onSelect={handleProblemSelect}
-              />
+        {state.step === 'challenge' && (
+          <div className={styles.challengeStep}>
+            <div className={styles.challengeHeader}>
+              <h2 className={styles.challengeTitle}>
+                Select a <span className={styles.highlight}>Grand Challenge</span>
+              </h2>
+              <p className={styles.challengeSubtitle}>
+                Choose a specific problem to solve, or let us pick randomly
+              </p>
             </div>
-          )}
 
-          {state.step === 'generating' && (
-            <LoadingSpinner message="Generating your business idea..." />
-          )}
-
-          {state.step === 'result' && state.generatedIdea && (
-            <div className={styles.resultStep}>
-              <button onClick={handleBack} className={styles.backButton}>
-                ← Back to Challenges
+            <div className={styles.challengeActions}>
+              <button 
+                className="brutalist-button"
+                onClick={handleRandomGenerate}
+                style={{ background: '#fff' }}
+              >
+                🎲 Random Challenge → Generate
               </button>
-              <IdeaCard
-                idea={state.generatedIdea}
-                onSave={handleSaveIdea}
-                onRegenerate={handleRegenerate}
-                isSaving={isSaving}
-              />
+              {state.selectedProblem && (
+                <button 
+                  className="brutalist-button"
+                  onClick={handleGenerate}
+                  style={{ background: 'var(--accent-yellow)' }}
+                >
+                  <span>🚀 Generate from Selected</span>
+                </button>
+              )}
             </div>
-          )}
-        </div>
+
+            <ChallengeList
+              problems={problems}
+              selectedId={state.selectedProblem?.id}
+              onSelect={handleProblemSelect}
+            />
+          </div>
+        )}
+
+        {state.step === 'generating' && (
+          <LoadingSpinner />
+        )}
+
+        {state.step === 'result' && state.generatedIdea && (
+          <div className={styles.resultStep}>
+            <IdeaCard
+              idea={state.generatedIdea}
+              onSave={handleSaveIdea}
+              onRegenerate={handleRegenerate}
+              isSaving={isSaving}
+            />
+          </div>
+        )}
       </main>
     </div>
   );

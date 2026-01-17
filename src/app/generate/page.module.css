@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--bg-primary);
 }
 
 .header {
@@ -11,6 +12,29 @@
   padding: var(--space-md) var(--space-xl);
   border-bottom: 3px solid #000;
   background: var(--bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: var(--space-xl); /* Ensure spacing between items */
+}
+
+.headerBackButton {
+  background: white;
+  border: 2px solid #000;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+  transition: all 0.1s;
+}
+
+.headerBackButton:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 .logo { display: flex; align-items: center; gap: var(--space-sm); }
@@ -32,8 +56,8 @@
 
 .main {
   flex: 1;
-  padding: var(--space-xl);
-  max-width: 1200px;
+  padding: var(--space-xl) var(--space-md); /* Reduced horizontal padding */
+  max-width: 100%; /* Allow full width */
   margin: 0 auto;
   width: 100%;
 }
@@ -42,18 +66,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-3xl);
+  gap: var(--space-sm); /* Tighter gap */
+  margin-bottom: 0; /* Remove margin as it's in header */
   font-family: var(--font-geist-mono);
 }
 
 .step {
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 0.75rem; /* Smaller padding */
   border: 2px solid #e4e4e7;
   color: #a1a1aa;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.875rem;
+  font-size: 0.75rem; /* Smaller text */
 }
 
 .step.active {
@@ -77,31 +101,36 @@
 }
 
 /* Challenge Step Overrides */
+/* Challenge Step Overrides */
 .challengeHeader {
   text-align: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
+  position: relative; /* Enable absolute positioning for children */
 }
 
 .challengeTitle {
-  font-size: 2.5rem;
+  font-size: 1.75rem; /* Reduced from 2.5rem */
   font-weight: 900;
   text-transform: uppercase;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
 .challengeActions {
   display: flex;
   justify-content: center;
   gap: var(--space-md);
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
 }
 
 .backButton {
+  position: absolute;
+  top: 0;
+  left: 0;
   background: none;
   border: none;
   font-family: var(--font-geist-mono);
   font-weight: 700;
   text-decoration: underline;
   cursor: pointer;
-  margin-bottom: var(--space-lg);
+  font-size: 0.75rem;
 }
