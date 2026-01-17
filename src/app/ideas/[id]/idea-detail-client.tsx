@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { SavedIdea, JobStory, GeneratedIdea, ValidationData } from '@/types';
+import { SavedIdea, JobStory, GeneratedIdea, ValidationData, UserProfile, IdeaFit } from '@/types';
 import { SignalScore } from '@/lib/validation/signal-score';
 import { CompetitorAnalysis } from '@/lib/validation/competitor-research';
 import { TrendAnalysis } from '@/lib/validation/trend-research';
 import { RiskAnalysis } from '@/lib/validation/risk-analysis';
+import { calculateIdeaFit } from '@/lib/ikigai/fit-scorer';
 import { IdeaCard } from '@/components/idea-card';
 import { SignalScoreGauge } from '@/components/signal-score-gauge';
 import { CompetitorList } from '@/components/competitor-list';
@@ -15,10 +16,10 @@ import { RiskDashboard } from '@/components/risk-dashboard';
 import styles from './page.module.css';
 
 interface IdeaDetailClientProps {
-  id: string;
+  ideaId: string;
 }
 
-export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
+export function IdeaDetailClient({ ideaId }: IdeaDetailClientProps) {
   const router = useRouter();
   const [idea, setIdea] = useState<SavedIdea | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,27 +37,41 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
   
   const [riskAnalysis, setRiskAnalysis] = useState<RiskAnalysis | null>(null);
   const [isAnalyzingRisks, setIsAnalyzingRisks] = useState(false);
+  
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [fitAnalysis, setFitAnalysis] = useState<IdeaFit | null>(null);
 
   useEffect(() => {
     fetchIdea();
+    fetchUserProfile(); // Fetch profile for fit score calculation
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [ideaId]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch('/api/profile');
+      const data = await response.json();
+      
+      if (data.success && data.profile) {
+        setUserProfile(data.profile);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   const fetchIdea = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`/api/ideas/${id}`);
+      const response = await fetch(`/api/ideas/${ideaId}`);
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.idea) {
         setIdea(data.idea);
         
         // Load existing validation if available
-        if (data.idea.validation_report && data.idea.signal_score) {
-          setSignalScore({
-            total: data.idea.signal_score,
-            breakdown: data.idea.validation_report.breakdown,
-            recommendations: data.idea.validation_report.recommendations,
-          });
+        if (data.idea.validation_report?.signal_score) {
+          setSignalScore(data.idea.validation_report.signal_score);
         } else {
           // Auto-trigger validation if not done yet
           handleValidate();
@@ -89,17 +104,26 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
         setError(data.error || 'Failed to fetch idea');
       }
     } catch (err) {
-      console.error('Error fetching idea:', err);
+      console.error('Fetch error:', err);
       setError('Failed to load idea');
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Calculate fit score when both idea and profile are loaded
+  useEffect(() => {
+    if (idea && userProfile && userProfile.onboarding_completed) {
+      const displayIdea = getDisplayIdea(idea);
+      const fit = calculateIdeaFit(displayIdea, userProfile);
+      setFitAnalysis(fit);
+    }
+  }, [idea, userProfile]);
+
   const handleValidate = async () => {
     setIsValidating(true);
     try {
-      const response = await fetch(`/api/ideas/${id}/validate`, {
+      const response = await fetch(`/api/ideas/${ideaId}/validate`, {
         method: 'POST',
       });
 
@@ -284,6 +308,7 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
           <div className={styles.contentColumn}>
             <IdeaCard 
               idea={displayIdea} 
+              fitAnalysis={fitAnalysis}
             />
           </div>
 

@@ -16,5 +16,5 @@ export default async function IdeaDetailPage({
 
   const { id } = await params;
 
-  return <IdeaDetailClient id={id} />;
+  return <IdeaDetailClient ideaId={id} />;
 }
