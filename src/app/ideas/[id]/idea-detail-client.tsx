@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SavedIdea, JobStory, GeneratedIdea, ValidationData } from '@/types';
 import { SignalScore } from '@/lib/validation/signal-score';
+import { CompetitorAnalysis } from '@/lib/validation/competitor-research';
 import { IdeaCard } from '@/components/idea-card';
 import { SignalScoreGauge } from '@/components/signal-score-gauge';
+import { CompetitorList } from '@/components/competitor-list';
 import styles from './page.module.css';
 
 interface IdeaDetailClientProps {
@@ -21,6 +23,9 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
   
   const [signalScore, setSignalScore] = useState<SignalScore | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  
+  const [competitorAnalysis, setCompetitorAnalysis] = useState<CompetitorAnalysis | null>(null);
+  const [isResearching, setIsResearching] = useState(false);
 
   useEffect(() => {
     fetchIdea();
@@ -45,6 +50,14 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
         } else {
           // Auto-trigger validation if not done yet
           handleValidate();
+        }
+        
+        // Load competitor data if available
+        if (data.idea.validation_report?.competitors) {
+          setCompetitorAnalysis(data.idea.validation_report.competitors);
+        } else {
+          // Auto-trigger competitor research
+          handleResearchCompetitors();
         }
       } else {
         setError(data.error || 'Failed to fetch idea');
@@ -75,6 +88,27 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
       console.error('Validation error:', err);
     } finally {
       setIsValidating(false);
+    }
+  };
+
+  const handleResearchCompetitors = async () => {
+    setIsResearching(true);
+    try {
+      const response = await fetch(`/api/ideas/${id}/competitors`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setCompetitorAnalysis(data.analysis);
+      } else {
+        console.error('Competitor research failed:', data.error);
+      }
+    } catch (err) {
+      console.error('Competitor research error:', err);
+    } finally {
+      setIsResearching(false);
     }
   };
 
@@ -197,11 +231,12 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
             </div>
             
             <div className={styles.dashboardCard}>
-              <h3 className={styles.dashboardTitle}>Competitors</h3>
-              <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>🤺</div>
-                <p>Competitor radar coming in next update...</p>
-              </div>
+              <h3 className={styles.dashboardTitle}>Competitive Landscape</h3>
+              <CompetitorList 
+                analysis={competitorAnalysis}
+                isLoading={isResearching}
+                onResearch={handleResearchCompetitors}
+              />
             </div>
           </div>
         </div>
