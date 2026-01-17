@@ -6,10 +6,12 @@ import { SavedIdea, JobStory, GeneratedIdea, ValidationData } from '@/types';
 import { SignalScore } from '@/lib/validation/signal-score';
 import { CompetitorAnalysis } from '@/lib/validation/competitor-research';
 import { TrendAnalysis } from '@/lib/validation/trend-research';
+import { RiskAnalysis } from '@/lib/validation/risk-analysis';
 import { IdeaCard } from '@/components/idea-card';
 import { SignalScoreGauge } from '@/components/signal-score-gauge';
 import { CompetitorList } from '@/components/competitor-list';
 import { TrendChart } from '@/components/trend-chart';
+import { RiskDashboard } from '@/components/risk-dashboard';
 import styles from './page.module.css';
 
 interface IdeaDetailClientProps {
@@ -31,6 +33,9 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
   
   const [trendAnalysis, setTrendAnalysis] = useState<TrendAnalysis | null>(null);
   const [isFetchingTrends, setIsFetchingTrends] = useState(false);
+  
+  const [riskAnalysis, setRiskAnalysis] = useState<RiskAnalysis | null>(null);
+  const [isAnalyzingRisks, setIsAnalyzingRisks] = useState(false);
 
   useEffect(() => {
     fetchIdea();
@@ -66,11 +71,19 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
         }
         
         // Load trend data if available
-        if (data.idea.validation_report?.trends) {
+        if (data.idea.validation report?.trends) {
           setTrendAnalysis(data.idea.validation_report.trends);
         } else {
           // Auto-trigger trend research
           handleFetchTrends();
+        }
+        
+        // Load risk data if available
+        if (data.idea.validation_report?.risks) {
+          setRiskAnalysis(data.idea.validation_report.risks);
+        } else {
+          // Auto-trigger risk analysis
+          handleAnalyzeRisks();
         }
       } else {
         setError(data.error || 'Failed to fetch idea');
@@ -143,6 +156,27 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
       console.error('Trend fetch error:', err);
     } finally {
       setIsFetchingTrends(false);
+    }
+  };
+
+  const handleAnalyzeRisks = async () => {
+    setIsAnalyzingRisks(true);
+    try {
+      const response = await fetch(`/api/ideas/${id}/risks`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setRiskAnalysis(data.analysis);
+      } else {
+        console.error('Risk analysis failed:', data.error);
+      }
+    } catch (err) {
+      console.error('Risk analysis error:', err);
+    } finally {
+      setIsAnalyzingRisks(false);
     }
   };
 
@@ -270,6 +304,15 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
                 analysis={trendAnalysis}
                 isLoading={isFetchingTrends}
                 onFetch={handleFetchTrends}
+              />
+            </div>
+            
+            <div className={styles.dashboardCard}>
+              <h3 className={styles.dashboardTitle}>Risk Analysis</h3>
+              <RiskDashboard 
+                analysis={riskAnalysis}
+                isLoading={isAnalyzingRisks}
+                onAnalyze={handleAnalyzeRisks}
               />
             </div>
           </div>
