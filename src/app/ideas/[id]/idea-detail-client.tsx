@@ -71,7 +71,7 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
         }
         
         // Load trend data if available
-        if (data.idea.validation report?.trends) {
+        if (data.idea.validation_report?.trends) {
           setTrendAnalysis(data.idea.validation_report.trends);
         } else {
           // Auto-trigger trend research
