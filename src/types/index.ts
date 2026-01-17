@@ -126,6 +126,10 @@ export interface SavedIdea {
 // MVP3: User Profile & Ikigai Types
 export * from './user-profile';
 
+// MVP4: Multi-Agent System Types
+export * from '../lib/agents/types';
+
+
 // LLM Types
 export type LLMProvider = 'gemini' | 'openai' | 'claude' | 'grok';
 
