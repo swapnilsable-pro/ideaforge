@@ -10,9 +10,21 @@ interface IdeaCardProps {
   onSave?: () => void;
   onRegenerate?: () => void;
   isSaving?: boolean;
+  justSaved?: boolean;
 }
 
-export function IdeaCard({ idea, onSave, onRegenerate, isSaving }: IdeaCardProps) {
+export function IdeaCard({ idea, onSave, onRegenerate, isSaving, justSaved }: IdeaCardProps) {
+  const getButtonContent = () => {
+    if (isSaving) return '⏳ SAVING...';
+    if (justSaved) return '✓ SAVED!';
+    return 'SAVE IDEA';
+  };
+
+  const getButtonStyle = () => {
+    if (justSaved) return { background: '#10b981', color: 'white' };
+    return {};
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.header}>
@@ -82,9 +94,10 @@ export function IdeaCard({ idea, onSave, onRegenerate, isSaving }: IdeaCardProps
         <button 
           className="brutalist-button button-primary" 
           onClick={onSave}
-          disabled={isSaving}
+          disabled={isSaving || justSaved}
+          style={getButtonStyle()}
         >
-          {isSaving ? 'SAVING...' : 'SAVE IDEA'}
+          {getButtonContent()}
         </button>
         <button className="brutalist-button" onClick={onRegenerate}>
           GENERATE ANOTHER

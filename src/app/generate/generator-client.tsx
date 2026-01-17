@@ -22,6 +22,7 @@ export function GeneratorClient() {
   });
   const [problems, setProblems] = useState<UnsolvedProblem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
 
   // Check auth status
   useEffect(() => {
@@ -163,15 +164,42 @@ export function GeneratorClient() {
     if (!state.generatedIdea || !user) return;
     
     setIsSaving(true);
+    setJustSaved(false);
+    
     try {
-      // For now, just show success - we'll implement actual save later
-      await new Promise(resolve => setTimeout(resolve, 500));
-      alert('Idea saved! (Demo mode - Supabase storage coming soon)');
+      const response = await fetch('/api/ideas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: state.generatedIdea.title,
+          problem_title: state.generatedIdea.problem_title,
+          problem_source: state.generatedIdea.problem_source,
+          domain: state.selectedDomain,
+          job_story: JSON.stringify(state.generatedIdea.job_story),
+          business_model: state.generatedIdea.business_model,
+          technology: state.generatedIdea.technology,
+          target_market: state.generatedIdea.target_audience,
+          revenue_model: state.generatedIdea.revenue_model,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSaving(false);
+        setJustSaved(true);
+        
+        // Reset success state after 2.5 seconds
+        setTimeout(() => {
+          setJustSaved(false);
+        }, 2500);
+      } else {
+        throw new Error(data.error || 'Failed to save');
+      }
     } catch (error) {
       console.error('Save error:', error);
-      alert('Failed to save idea');
-    } finally {
       setIsSaving(false);
+      setJustSaved(false);
     }
   };
 
@@ -245,7 +273,15 @@ export function GeneratorClient() {
           </div>
         </div>
         
-        <UserDropdown user={user} />
+        <div className={styles.userSection}>
+          <button 
+            className={styles.navLink}
+            onClick={() => router.push('/ideas')}
+          >
+            My Ideas 📂
+          </button>
+          <UserDropdown user={user} />
+        </div>
       </header>
 
       <main className={styles.main}>
@@ -313,6 +349,7 @@ export function GeneratorClient() {
               onSave={handleSaveIdea}
               onRegenerate={handleRegenerate}
               isSaving={isSaving}
+              justSaved={justSaved}
             />
           </div>
         )}

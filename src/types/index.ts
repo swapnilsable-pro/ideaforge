@@ -101,6 +101,27 @@ export interface ValidationData {
   opportunities: string[];
 }
 
+// Saved Idea (from database)
+export interface SavedIdea {
+  id: string;
+  user_id: string;
+  title: string;
+  problem_title: string | null;
+  problem_source: string | null;
+  domain: Domain | null;
+  job_story: string;
+  business_model: string | null;
+  technology: string | null;
+  target_market: string | null;
+  revenue_model: string | null;
+  signal_score: number | null;
+  validation_report: ValidationData | null;
+  last_validated_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+
 // LLM Types
 export type LLMProvider = 'gemini' | 'openai' | 'claude' | 'grok';
 
