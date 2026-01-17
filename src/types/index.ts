@@ -109,6 +109,8 @@ export interface SavedIdea {
   problem_title: string | null;
   problem_source: string | null;
   domain: Domain | null;
+  problem_description: string | null;
+  solution_description: string | null;
   job_story: string;
   business_model: string | null;
   technology: string | null;

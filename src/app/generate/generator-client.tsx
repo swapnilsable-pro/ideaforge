@@ -173,6 +173,8 @@ export function GeneratorClient() {
         body: JSON.stringify({
           title: state.generatedIdea.title,
           problem_title: state.generatedIdea.problem_title,
+          problem_description: state.generatedIdea.problem_description,
+          solution_description: state.generatedIdea.solution_description,
           problem_source: state.generatedIdea.problem_source,
           domain: state.selectedDomain,
           job_story: JSON.stringify(state.generatedIdea.job_story),

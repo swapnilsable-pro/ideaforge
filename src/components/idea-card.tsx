@@ -90,19 +90,25 @@ export function IdeaCard({ idea, onSave, onRegenerate, isSaving, justSaved }: Id
         </div>
       </div>
 
-      <div className={styles.actions}>
-        <button 
-          className="brutalist-button button-primary" 
-          onClick={onSave}
-          disabled={isSaving || justSaved}
-          style={getButtonStyle()}
-        >
-          {getButtonContent()}
-        </button>
-        <button className="brutalist-button" onClick={onRegenerate}>
-          GENERATE ANOTHER
-        </button>
-      </div>
+      {(onSave || onRegenerate) && (
+        <div className={styles.actions}>
+          {onSave && (
+            <button 
+              className="brutalist-button button-primary" 
+              onClick={onSave}
+              disabled={isSaving || justSaved}
+              style={getButtonStyle()}
+            >
+              {getButtonContent()}
+            </button>
+          )}
+          {onRegenerate && (
+            <button className="brutalist-button" onClick={onRegenerate}>
+              GENERATE ANOTHER
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

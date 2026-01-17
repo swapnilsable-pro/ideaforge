@@ -53,6 +53,8 @@ export async function POST(request: NextRequest) {
         title: body.title,
         problem_title: body.problem_title || null,
         problem_source: body.problem_source || null,
+        problem_description: body.problem_description,
+        solution_description: body.solution_description,
         domain: body.domain || null,
         job_story: body.job_story,
         business_model: body.business_model || null,
