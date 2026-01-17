@@ -73,16 +73,16 @@ export function GeneratorClient() {
     }));
   };
 
-  const handleGenerate = async () => {
-    setState(prev => ({ ...prev, step: 'generating', isLoading: true, error: undefined }));
-
+  const generateIdea = async (problemId?: string) => {
+    setState(prev => ({ ...prev, step: 'generating', isLoading: true, error: undefined, fitAnalysis: null }));
+    
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           domain: state.selectedDomain,
-          problemId: state.selectedProblem?.id,
+          problemId, // problemId can be undefined for random generation
         }),
       });
 
@@ -93,6 +93,7 @@ export function GeneratorClient() {
           ...prev,
           step: 'result',
           generatedIdea: data.idea,
+          fitAnalysis: data.fitAnalysis || null, // Store fit analysis
           isLoading: false,
         }));
       } else {
@@ -111,6 +112,16 @@ export function GeneratorClient() {
         isLoading: false,
         error: 'Failed to generate idea. Please try again.',
       }));
+    }
+  };
+
+  const handleGenerate = async () => {
+    if (state.selectedProblem?.id) {
+      generateIdea(state.selectedProblem.id);
+    } else {
+      // This case should ideally not happen if selectedProblem is always set for handleGenerate
+      // but as a fallback, we can call random generation
+      generateIdea();
     }
   };
 
@@ -347,12 +358,13 @@ export function GeneratorClient() {
         {state.step === 'result' && state.generatedIdea && (
           <div className={styles.resultStep}>
             <IdeaCard
-              idea={state.generatedIdea}
-              onSave={handleSaveIdea}
-              onRegenerate={handleRegenerate}
-              isSaving={isSaving}
-              justSaved={justSaved}
-            />
+            idea={state.generatedIdea}
+            fitAnalysis={state.fitAnalysis}
+            onSave={handleSaveIdea}
+            onRegenerate={handleRegenerate}
+            isSaving={isSaving}
+            justSaved={justSaved}
+          />
           </div>
         )}
       </main>

@@ -166,6 +166,7 @@ export interface GeneratorState {
   selectedDomain?: Domain;
   selectedProblem?: UnsolvedProblem;
   generatedIdea?: GeneratedIdea;
+  fitAnalysis?: IdeaFit | null; // MVP3: Personalized fit score
   isLoading: boolean;
   error?: string;
 }

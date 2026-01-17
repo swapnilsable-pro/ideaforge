@@ -1,19 +1,21 @@
 'use client';
 
-import type { GeneratedIdea } from '@/types';
+import type { GeneratedIdea, IdeaFit } from '@/types';
 import { BUSINESS_MODELS, TECHNOLOGIES } from '@/types';
 import { getSourceDisplayName } from '@/lib/problems';
+import { FitScoreBadge } from './fit-score-badge';
 import styles from './idea-card.module.css';
 
 interface IdeaCardProps {
   idea: GeneratedIdea;
+  fitAnalysis?: IdeaFit | null;
   onSave?: () => void;
   onRegenerate?: () => void;
   isSaving?: boolean;
   justSaved?: boolean;
 }
 
-export function IdeaCard({ idea, onSave, onRegenerate, isSaving, justSaved }: IdeaCardProps) {
+export function IdeaCard({ idea, fitAnalysis, onSave, onRegenerate, isSaving, justSaved }: IdeaCardProps) {
   const getButtonContent = () => {
     if (isSaving) return '⏳ SAVING...';
     if (justSaved) return '✓ SAVED!';
@@ -38,6 +40,11 @@ export function IdeaCard({ idea, onSave, onRegenerate, isSaving, justSaved }: Id
         <h2 className={styles.title}>{idea.title}</h2>
         <p className={styles.tagline}>{idea.tagline}</p>
       </div>
+
+      {/* Fit Score Badge - Only show if user has profile */}
+      {fitAnalysis && (
+        <FitScoreBadge fitAnalysis={fitAnalysis} />
+      )}
 
       <div className={styles.mainGrid}>
         <div className={styles.content}>
