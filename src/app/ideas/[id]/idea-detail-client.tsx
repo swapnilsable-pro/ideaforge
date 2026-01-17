@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SavedIdea, JobStory, GeneratedIdea, ValidationData } from '@/types';
+import { SignalScore } from '@/lib/validation/signal-score';
 import { IdeaCard } from '@/components/idea-card';
+import { SignalScoreGauge } from '@/components/signal-score-gauge';
 import styles from './page.module.css';
 
 interface IdeaDetailClientProps {
@@ -16,6 +18,9 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const [signalScore, setSignalScore] = useState<SignalScore | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   useEffect(() => {
     fetchIdea();
@@ -29,6 +34,18 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
 
       if (data.success) {
         setIdea(data.idea);
+        
+        // Load existing validation if available
+        if (data.idea.validation_report && data.idea.signal_score) {
+          setSignalScore({
+            total: data.idea.signal_score,
+            breakdown: data.idea.validation_report.breakdown,
+            recommendations: data.idea.validation_report.recommendations,
+          });
+        } else {
+          // Auto-trigger validation if not done yet
+          handleValidate();
+        }
       } else {
         setError(data.error || 'Failed to fetch idea');
       }
@@ -37,6 +54,27 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
       setError('Failed to load idea');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleValidate = async () => {
+    setIsValidating(true);
+    try {
+      const response = await fetch(`/api/ideas/${id}/validate`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSignalScore(data.score);
+      } else {
+        console.error('Validation failed:', data.error);
+      }
+    } catch (err) {
+      console.error('Validation error:', err);
+    } finally {
+      setIsValidating(false);
     }
   };
 
@@ -147,22 +185,22 @@ export function IdeaDetailClient({ id }: IdeaDetailClientProps) {
             />
           </div>
 
-          {/* Validation Dashboard Placeholder - Right Column */}
+          {/* Validation Dashboard - Right Column */}
           <div className={styles.dashboardColumn}>
             <div className={styles.dashboardCard}>
-              <h3 className={styles.dashboardTitle}>Validation Dashboard</h3>
-              <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>📊</div>
-                <p>Signal Score & Market Analysis coming soon...</p>
-                <div className={styles.comingSoonBadge}>MVP 2 In Progress</div>
-              </div>
+              <h3 className={styles.dashboardTitle}>Founder Signal Score</h3>
+              <SignalScoreGauge 
+                score={signalScore}
+                isLoading={isValidating}
+                onValidate={handleValidate}
+              />
             </div>
             
-             <div className={styles.dashboardCard}>
+            <div className={styles.dashboardCard}>
               <h3 className={styles.dashboardTitle}>Competitors</h3>
               <div className={styles.emptyState}>
                 <div className={styles.emptyIcon}>🤺</div>
-                <p>Competitor radar scanning...</p>
+                <p>Competitor radar coming in next update...</p>
               </div>
             </div>
           </div>
