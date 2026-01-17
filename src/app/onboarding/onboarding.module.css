@@ -1,0 +1,309 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  min-height: 100vh;
+}
+
+/* Progress Bar */
+.progressWrapper {
+  margin-bottom: var(--space-xl);
+}
+
+.progressBar {
+  width: 100%;
+  height: 20px;
+  background: #f4f4f5;
+  border: 3px solid #000;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-yellow);
+  border-right: 3px solid #000;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  margin-top: var(--space-sm);
+  font-family: var(--font-geist-mono);
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+/* Step Content */
+.stepContent {
+  background: white;
+  border: 4px solid #000;
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  box-shadow: 8px 8px 0 #000;
+  min-height: 500px;
+}
+
+.step {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stepTitle {
+  font-size: 1.75rem;
+  font-weight: 900;
+  margin: 0 0 var(--space-md) 0;
+  text-transform: uppercase;
+}
+
+.stepDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: var(--space-lg);
+  color: #52525b;
+}
+
+.stepHint {
+  font-size: 0.875rem;
+  color: #71717a;
+  font-family: var(--font-geist-mono);
+  margin-top: var(--space-lg);
+}
+
+/* Info Box */
+.infoBox {
+  background: #fafafa;
+  border: 2px solid #000;
+  padding: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.infoBox h3 {
+  font-size: 1rem;
+  font-weight: 900;
+  margin: 0 0 var(--space-sm) 0;
+  text-transform: uppercase;
+}
+
+.infoBox ul {
+  margin: 0;
+  padding-left: var(--space-md);
+  list-style: none;
+}
+
+.infoBox li {
+  margin-bottom: var(--space-xs);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.infoBox li::before {
+  content: "▸ ";
+  color: var(--accent-yellow);
+  font-weight: 900;
+}
+
+/* Form Fields */
+.fieldGroup {
+  margin-bottom: var(--space-lg);
+}
+
+.label {
+  display: block;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-geist-mono);
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: #71717a;
+  margin: -0.25rem 0 var(--space-sm) 0;
+  font-family: var(--font-geist-mono);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid #000;
+  font-family: var(--font-geist-mono);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-sm);
+  background: white;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 2px 2px 0 var(--accent-blue);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Chips (Multi-select buttons) */
+.chipGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.chip {
+  padding: var(--space-xs) var(--space-md);
+  border: 2px solid #000;
+  background: white;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.1s;
+  text-transform: uppercase;
+  font-family: var(--font-geist-mono);
+}
+
+.chip:hover {
+  background: #f4f4f5;
+}
+
+.chip:active {
+  transform: translate(2px, 2px);
+}
+
+.chipActive {
+  background: var(--accent-yellow);
+  box-shadow: 2px 2px 0 #000;
+}
+
+/* Checkboxes */
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+/* Radio Buttons */
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border: 2px solid #e4e4e7;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.radioLabel:hover {
+  background: #fafafa;
+}
+
+.radioLabel input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.radioLabel input[type="radio"]:checked + span {
+  font-weight: 700;
+}
+
+/* Add Button */
+.addButton {
+  background: #f4f4f5;
+  border: 2px solid #000;
+  padding: var(--space-xs) var(--space-md);
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: var(--font-geist-mono);
+}
+
+.addButton:hover {
+  background: #e4e4e7;
+}
+
+.addButton:active {
+  transform: translate(2px, 2px);
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.backButton,
+.nextButton,
+.submitButton {
+  padding: var(--space-md) var(--space-lg);
+  border: 3px solid #000;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.1s;
+}
+
+.backButton {
+  background: white;
+}
+
+.backButton:hover {
+  background: #f4f4f5;
+}
+
+.nextButton,
+.submitButton {
+  background: var(--accent-yellow);
+  box-shadow: 4px 4px 0 #000;
+  flex: 1;
+}
+
+.nextButton:active,
+.submitButton:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
