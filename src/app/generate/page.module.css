@@ -2,8 +2,6 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
-  z-index: 1;
 }
 
 .header {
@@ -11,38 +9,13 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-md) var(--space-xl);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--glass-border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  border-bottom: 3px solid #000;
+  background: var(--bg-primary);
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.logoIcon {
-  font-size: 1.5rem;
-  filter: drop-shadow(0 0 10px var(--neon-cyan));
-}
-
-.logoText {
-  font-size: 1.25rem;
-  font-weight: 700;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+.logo { display: flex; align-items: center; gap: var(--space-sm); }
+.logoIcon { font-size: 1.5rem; }
+.logoText { font-size: 1.25rem; font-weight: 800; text-transform: uppercase; }
 
 .userSection {
   display: flex;
@@ -51,21 +24,10 @@
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #000;
   border-radius: 50%;
-  border: 2px solid var(--glass-border);
-}
-
-.userName {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-@media (max-width: 600px) {
-  .userName {
-    display: none;
-  }
 }
 
 .main {
@@ -76,150 +38,70 @@
   width: 100%;
 }
 
-/* Progress Steps */
 .progress {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-2xl);
+  gap: var(--space-md);
+  margin-bottom: var(--space-3xl);
+  font-family: var(--font-geist-mono);
 }
 
 .step {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-full);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  transition: all var(--transition-base);
+  padding: 0.5rem 1rem;
+  border: 2px solid #e4e4e7;
+  color: #a1a1aa;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.875rem;
 }
 
 .step.active {
-  background: var(--gradient-primary);
-  border-color: transparent;
+  border-color: #000;
+  color: #000;
+  background: var(--accent-yellow);
+  box-shadow: 4px 4px 0 #000;
 }
 
 .step.completed {
-  border-color: var(--neon-green);
-}
-
-.step.completed .stepNumber {
-  background: var(--neon-green);
-  color: #0a0a1a;
-}
-
-.stepNumber {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--glass-border);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.step.active .stepNumber {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.stepLabel {
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-@media (max-width: 500px) {
-  .stepLabel {
-    display: none;
-  }
+  border-color: #000;
+  color: #000;
+  background: #f4f4f5;
+  text-decoration: line-through;
 }
 
 .stepLine {
-  width: 40px;
+  width: 30px;
   height: 2px;
-  background: var(--glass-border);
+  background: #e4e4e7;
 }
 
-/* Error Message */
-.error {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
-  background: rgba(255, 107, 107, 0.1);
-  border: 1px solid rgba(255, 107, 107, 0.3);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-xl);
-  color: #ff6b6b;
-}
-
-/* Content */
-.content {
-  animation: fade-in 0.3s ease;
-}
-
-/* Challenge Step */
-.challengeStep {
-  animation: fade-in 0.5s ease;
-}
-
+/* Challenge Step Overrides */
 .challengeHeader {
   text-align: center;
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-2xl);
 }
 
 .challengeTitle {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
   margin-bottom: var(--space-sm);
-}
-
-.challengeSubtitle {
-  color: var(--text-secondary);
 }
 
 .challengeActions {
   display: flex;
   justify-content: center;
   gap: var(--space-md);
-  margin-bottom: var(--space-xl);
-  flex-wrap: wrap;
+  margin-bottom: var(--space-2xl);
 }
 
-/* Back Button */
 .backButton {
-  display: inline-flex;
-  align-items: center;
   background: none;
   border: none;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-family: var(--font-geist-mono);
+  font-weight: 700;
+  text-decoration: underline;
   cursor: pointer;
-  padding: var(--space-sm) 0;
   margin-bottom: var(--space-lg);
-  transition: color var(--transition-fast);
-}
-
-.backButton:hover {
-  color: var(--text-primary);
-}
-
-/* Result Step */
-.resultStep {
-  max-width: 800px;
-  margin: 0 auto;
-  animation: fade-in 0.5s ease;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }

@@ -11,12 +11,12 @@ interface DomainSelectorProps {
 export function DomainSelector({ selectedDomain, onSelect }: DomainSelectorProps) {
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>
-        <span className="gradient-text">Choose Your Domain</span>
-      </h2>
-      <p className={styles.subtitle}>
-        Select an impact area to discover unsolved problems and business opportunities
-      </p>
+      <header className={styles.header}>
+        <h2 className={styles.title}>SELECT DOMAIN</h2>
+        <p className={styles.subtitle}>
+          Choose an impact area to investigate
+        </p>
+      </header>
       
       <div className={styles.grid}>
         {DOMAINS.map((domain) => (
@@ -43,7 +43,6 @@ function DomainCard({ domain, isSelected, onSelect }: DomainCardProps) {
     <button
       className={`${styles.card} ${isSelected ? styles.selected : ''}`}
       onClick={onSelect}
-      style={{ '--domain-color': domain.color } as React.CSSProperties}
     >
       <div className={styles.icon}>{domain.icon}</div>
       <h3 className={styles.name}>{domain.name}</h3>

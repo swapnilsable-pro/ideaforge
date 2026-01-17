@@ -14,12 +14,12 @@ export default async function Home() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <span className={styles.logoIcon}>⚡</span>
-          <span className={styles.logoText}>IdeaForge</span>
+          <div className={styles.logoIcon}>⚡</div>
+          <div className={styles.logoText}>IdeaForge</div>
         </div>
         {user && (
-          <Link href="/generate" className="glass-button">
-            Go to Generator →
+          <Link href="/generate" className="brutalist-button">
+            Generator →
           </Link>
         )}
       </header>
@@ -27,58 +27,56 @@ export default async function Home() {
       <main className={styles.main}>
         <div className={styles.hero}>
           <h1 className={styles.title}>
-            <span className="gradient-text">Transform</span> Unsolved Problems
-            <br />
-            Into <span className="gradient-text">Startup Ideas</span>
+            BUILD THE <span className={styles.highlight}>EXTRAORDINARY</span>
           </h1>
           
           <p className={styles.subtitle}>
-            AI-powered ideation engine that connects global challenges—from XPrize 
-            to UN SDGs—with validated business opportunities tailored to your vision.
+            Don't build another todo app. Use our AI engine to discover $100M+ opportunities 
+            hidden in global grand challenges.
           </p>
 
           <div className={styles.cta}>
             {user ? (
-              <Link href="/generate" className="glass-button button-primary">
-                <span>🚀</span> Start Generating Ideas
+              <Link href="/generate" className="brutalist-button button-primary">
+                START GENERATING
               </Link>
             ) : (
               <GoogleLoginButton />
             )}
           </div>
-
-          <div className={styles.sources}>
-            <p className={styles.sourcesLabel}>Powered by challenges from</p>
-            <div className={styles.sourceLogos}>
-              <span className={styles.sourceBadge} style={{ background: '#00d4ff' }}>XPRIZE</span>
-              <span className={styles.sourceBadge} style={{ background: '#00ff88' }}>UN SDGs</span>
-              <span className={styles.sourceBadge} style={{ background: '#ff6b6b' }}>WEF Risks</span>
-              <span className={styles.sourceBadge} style={{ background: '#ff9f43' }}>YC RFS</span>
-            </div>
-          </div>
         </div>
 
         <div className={styles.features}>
           <div className={styles.feature}>
-            <div className={styles.featureIcon}>🎯</div>
-            <h3>Mode B: Moonshot Ideas</h3>
-            <p>Generate ideas from $100M+ grand challenges and investor wishlists</p>
+            <div className={styles.featureIcon}>🚀</div>
+            <h3>Moonshot Factory</h3>
+            <p>Direct access to XPrize & YC requests. Solve real problems that matter.</p>
           </div>
           <div className={styles.feature}>
-            <div className={styles.featureIcon}>🤖</div>
-            <h3>AI-Powered Validation</h3>
-            <p>Get viability scores, risk warnings, and market opportunities</p>
+            <div className={styles.featureIcon}>🧠</div>
+            <h3>AI Validation</h3>
+            <p>Instant viability scoring and risk analysis for every generated idea.</p>
           </div>
           <div className={styles.feature}>
-            <div className={styles.featureIcon}>📖</div>
-            <h3>Job Story Framework</h3>
-            <p>Every idea comes with a JTBD story for crystal-clear value propositions</p>
+            <div className={styles.featureIcon}>📝</div>
+            <h3>Job Stories</h3>
+            <p>Clear "Jobs to be Done" framework output for immediate clarity.</p>
+          </div>
+        </div>
+
+        <div className={styles.sources}>
+          <p className={styles.sourcesLabel}>DATA SOURCES</p>
+          <div className={styles.sourceLogos}>
+            <span className={styles.sourceBadge}>XPRIZE</span>
+            <span className={styles.sourceBadge}>UN SDGs</span>
+            <span className={styles.sourceBadge}>WEF RISKS</span>
+            <span className={styles.sourceBadge}>YC RFS</span>
           </div>
         </div>
       </main>
 
       <footer className={styles.footer}>
-        <p>Built with Next.js, Supabase, and Google Gemini</p>
+        <p>Built for ambitious founders. Powered by Gemini & Groq.</p>
       </footer>
     </div>
   );
