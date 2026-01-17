@@ -90,6 +90,11 @@ export function TrendChart({ analysis, isLoading, onFetch }: TrendChartProps) {
         </div>
       </div>
 
+      {/* Simulated Data Badge */}
+      <div className={styles.simulatedBadge}>
+        ⚠️ Simulated Data - Real Google Trends integration coming soon
+      </div>
+
       {/* Brutalist Line Chart */}
       <div className={styles.chartWrapper}>
         <div className={styles.chartTitle}>12-Month Search Interest</div>

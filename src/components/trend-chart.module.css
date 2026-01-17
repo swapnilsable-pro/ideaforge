@@ -81,6 +81,20 @@
   font-family: var(--font-geist-mono);
 }
 
+/* Simulated Data Badge */
+.simulatedBadge {
+  background: #fef9c3;
+  border: 2px solid #000;
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-lg);
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-geist-mono);
+  text-transform: uppercase;
+  color: #854d0e;
+}
+
 /* Chart */
 .chartWrapper {
   background: white;
