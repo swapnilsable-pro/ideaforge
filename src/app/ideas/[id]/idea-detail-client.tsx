@@ -144,7 +144,7 @@ export function IdeaDetailClient({ ideaId }: IdeaDetailClientProps) {
   const handleResearchCompetitors = async () => {
     setIsResearching(true);
     try {
-      const response = await fetch(`/api/ideas/${id}/competitors`, {
+      const response = await fetch(`/api/ideas/${ideaId}/competitors`, {
         method: 'POST',
       });
 
@@ -165,7 +165,7 @@ export function IdeaDetailClient({ ideaId }: IdeaDetailClientProps) {
   const handleFetchTrends = async () => {
     setIsFetchingTrends(true);
     try {
-      const response = await fetch(`/api/ideas/${id}/trends`, {
+      const response = await fetch(`/api/ideas/${ideaId}/trends`, {
         method: 'POST',
       });
 
@@ -186,7 +186,7 @@ export function IdeaDetailClient({ ideaId }: IdeaDetailClientProps) {
   const handleAnalyzeRisks = async () => {
     setIsAnalyzingRisks(true);
     try {
-      const response = await fetch(`/api/ideas/${id}/risks`, {
+      const response = await fetch(`/api/ideas/${ideaId}/risks`, {
         method: 'POST',
       });
 
